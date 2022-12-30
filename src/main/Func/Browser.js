@@ -1,6 +1,8 @@
 import fs from 'fs';
 
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
+const ps = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(ps());
 
 export default async function browser({
   global,
@@ -21,6 +23,7 @@ export default async function browser({
     userDataDir: global.V8_USER_PREFERENCES + userID + '\\',
   });
   const [page] = await browser.pages();
+  await page.setExtraHTTPHeaders({ referer: 'https://www.lazada.co.id' });
   return { browser, page };
 }
 

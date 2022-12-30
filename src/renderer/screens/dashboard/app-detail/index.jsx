@@ -124,7 +124,7 @@ export default function Index(args) {
 
       <img src={icon} className="icon" />
       <div className="name">
-        <div className="title">AliExpress</div>
+        <div className="title">Lazada</div>
         <div className="subtitle">Scrapper v{version}</div>
       </div>
       <div className="routes" style={{ '-webkit-app-region': 'no-drag' }}>

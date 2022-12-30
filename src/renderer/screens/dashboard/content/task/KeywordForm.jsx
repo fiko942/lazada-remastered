@@ -1,4 +1,17 @@
-import { Button, TextField, FormControlLabel, Checkbox } from '@mui/material';
+import {
+  Button,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  FormGroup,
+  ListItem,
+  Select,
+  InputLabel,
+  FormControl,
+  MenuItem,
+  Rating,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import Dialog from './Dialog';
 
@@ -7,13 +20,17 @@ export default function KeywordForm(args) {
   const [keyword, setKeyword] = useState('');
   const [min_price, setMinPrice] = useState('');
   const [max_price, setMaxPrice] = useState('');
-  const [freeOngkir, setFreeOngkir] = useState(false);
-  const [fourStar, setFourStar] = useState(false);
-  const [core, setCore] = useState(1);
+  const [location, setLocation] = useState(locs[0].val);
+  const [filterLocState, setFilterLocState] = useState(false);
+  const [rating, setRating] = useState(1);
+
   const [maxPage, setMaxPage] = useState(1);
   const [dialogMessage, setDialogMessage] = useState('');
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleLocationChange = (e) => setLocation(e.target.value);
+  const handleFilterLocStateChange = (e) => setFilterLocState(e.target.checked);
 
   const handleDialogClose = () => setDialogOpen(false);
 
@@ -21,20 +38,12 @@ export default function KeywordForm(args) {
   const handleKeywordChange = (event) => setKeyword(event.target.value);
   const handleMaxPriceChange = (event) => setMaxPrice(event.target.value);
   const handleMinPriceChange = (event) => setMinPrice(event.target.value);
-  const handleFreeOngkirChange = (event) => setFreeOngkir(event.target.checked);
-  const handleFourStarChange = (event) => setFourStar(event.target.checked);
   const handleMaxPageChange = (event) => setMaxPage(event.target.value);
-  const handleCoreChange = (event) => setCore(event.target.value);
   const handleTaskStart = () => {
     const keywords = keyword
       .trim()
       .split(',')
       .map((x) => x.trim());
-    if (isNaN(core) || !parseInt(core)) {
-      setDialogOpen(true);
-      setDialogMessage('Jumlah tab yang anda masukkan tidak valid!');
-      return;
-    }
     if (isNaN(maxPage) || !parseInt(maxPage)) {
       setDialogOpen(true);
       setDialogMessage('Jumlah halaman yang anda masukkan tidak valid');
@@ -44,12 +53,12 @@ export default function KeywordForm(args) {
     return args.onTaskStart({
       type: 'KEYWORD',
       keywords,
-      core: parseInt(core),
       maxPage: parseInt(maxPage),
       minPrice: min_price,
       maxPrice: max_price,
-      freeOngkir,
-      fourStar,
+      filter_location_state: filterLocState,
+      location,
+      rating,
     });
   };
   // End of change handler
@@ -99,29 +108,6 @@ export default function KeywordForm(args) {
           onChange={handleMaxPriceChange.bind(this)}
         />
       </div>
-      <div className="group small">
-        <FormControlLabel
-          disabled={loading}
-          control={
-            <Checkbox
-              checked={freeOngkir}
-              onChange={handleFreeOngkirChange.bind(this)}
-            />
-          }
-          label="Free Ongkir"
-        />
-        <FormControlLabel
-          disabled={loading}
-          control={
-            <Checkbox
-              checked={fourStar}
-              onChange={handleFourStarChange.bind(this)}
-            />
-          }
-          label="4 Star++"
-          className="right"
-        />
-      </div>
       <TextField
         variant="outlined"
         label="Jumlah halaman"
@@ -132,17 +118,47 @@ export default function KeywordForm(args) {
         value={maxPage}
         onChange={handleMaxPageChange.bind(this)}
       />
-      <TextField
-        variant="outlined"
-        size="small"
-        label="Tab"
-        type="number"
-        required
-        disabled={loading}
-        helperText="Seimbangkan kecepatan internet dengan performa komputer"
-        value={core}
-        onChange={handleCoreChange.bind(this)}
-      />
+      <FormGroup
+        sx={{
+          display: 'inline',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        fullWidth
+      >
+        <Checkbox
+          checked={filterLocState}
+          onChange={handleFilterLocStateChange.bind(this)}
+        />
+        <FormControl sx={{ width: 'calc(100% - 50px)' }}>
+          <InputLabel size="small" id="lokasi-label">
+            Pilih lokasi
+          </InputLabel>
+          <Select
+            size="small"
+            labelId="lokasi-label"
+            id="lokasi"
+            label="Pilih lokasi"
+            value={location}
+            onChange={handleLocationChange.bind(this)}
+          >
+            {locs.map((loc, i) => (
+              <MenuItem key={i} value={loc.val}>
+                {loc.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </FormGroup>
+      <FormGroup>
+        <Typography component="legend">Rating</Typography>
+        <Rating
+          value={rating}
+          onChange={(e, r) => {
+            setRating(r);
+          }}
+        />
+      </FormGroup>
       {!loading && (
         <Button
           sx={{
@@ -160,3 +176,14 @@ export default function KeywordForm(args) {
     </div>
   );
 }
+
+const locs = [
+  {
+    name: 'Dalam negeri',
+    val: 'Local',
+  },
+  {
+    name: 'Luar negeri',
+    val: 'Overseas',
+  },
+];

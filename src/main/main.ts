@@ -8,20 +8,10 @@ import Func from './Func';
 import fs from 'fs';
 import open from 'open';
 import { exec, execFile } from 'child_process';
+import ScrapKeyword from './Class/ScrapKeyword';
 
 // Classes
-import GetItemListByKeyword from './Class/GetItemListByKeyword';
-import GetItemListByShop from './Class/GetItemListByShop';
-import GetProductDetail from './Class/GetProductDetail';
-
-var getItemListBykeyword = new GetItemListByKeyword();
-var getItemListByShop = new GetItemListByShop();
-var getProductDetail = new GetProductDetail();
-
-// * MAIN STATE
-var SOLVING_CAPTCHA = false;
-// ! MAIN STATE
-
+const scrapKeyword = new ScrapKeyword();
 // * Minimize memory usage in electron
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('disable-gpu');
@@ -29,6 +19,15 @@ app.commandLine.appendSwitch('kiosk');
 app.commandLine.appendSwitch('disable-software-rasterizer');
 app.commandLine.appendSwitch('in-process-gpu');
 app.disableHardwareAcceleration();
+
+if (
+  !fs.existsSync(
+    'C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\'
+  )
+) {
+  fs.mkdirSync('C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\');
+}
+Func.InitFiles(global);
 
 Func.InitChromeExtensions({
   global,
@@ -86,7 +85,6 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  Func.InitFiles(global);
   if (isDebug) {
     await installExtensions();
   }
@@ -229,12 +227,11 @@ const sendTaskState = () => {
 ipcMain.on('task stop', () => {
   if (STATE.task.current_type == 'KEYWORD') {
     try {
-      getItemListBykeyword.stop();
+      scrapKeyword.stop();
     } catch (er) {}
   } else {
     // Nothing
   }
-  getProductDetail.stop();
   STATE.task.loading = false;
   STATE.task.tasks = [];
   return sendTaskState();
@@ -247,15 +244,69 @@ ipcMain.on('task start', async (sender, args) => {
   STATE.task.current_type = args.type;
   console.log('task start ARGUMENTS: ', args);
 
-  // Data yang akan berubah terhadap sisi front end
-  args.onLog = (keyword, log) => {
+  var opts = {};
+
+  var minPrice = 0;
+  var maxPrice = 0;
+  if (args.minPrice.length >= 1) {
+    if (isNaN(args.minPrice) && !parseInt(args.minPrice)) {
+      return mainWindow?.webContents.send('message', {
+        title: 'Validasi error',
+        message: 'Min price yang anda masukkan tidak valid',
+      });
+    } else {
+      minPrice = parseInt(args.minPrice);
+    }
+  }
+  if (args.maxPrice.length >= 1) {
+    if (isNaN(args.maxPrice) && !parseInt(args.maxPrice)) {
+      return mainWindow?.webContents.send('message', {
+        title: 'Validasi error',
+        message: 'Min price yang anda masukkan tidak valid',
+      });
+    } else {
+      maxPrice = parseInt(args.maxPrice);
+    }
+  }
+  opts.minPrice = minPrice;
+  opts.maxPrice = maxPrice;
+  opts.keywords = args.keywords;
+  opts.maxPage = args.maxPage;
+  opts.global = args.global;
+  opts.filterLocation = args.filter_location_state;
+  opts.location = args.location;
+  opts.rating = args.rating;
+
+  // // Data yang akan berubah terhadap sisi front end
+  for (var keywords of opts.keywords) {
+    STATE.task.tasks.push({
+      name: keywords,
+      message: 'waiting...',
+      success: false,
+    });
+    sendTaskState();
+  }
+  STATE.task.tasks.push({
+    name: 'Total',
+    message: '0',
+    success: false,
+  });
+  sendTaskState();
+  opts.totalChange = (t) => {
+    const i = STATE.task.tasks.findIndex((x) => x.name == 'Total');
+    if (i >= 0) {
+      STATE.task.tasks[i].message = t;
+    }
+    return sendTaskState();
+  };
+  opts.onLog = (keyword, log) => {
     const i = STATE.task.tasks.findIndex((x) => x.name == keyword);
     if (i >= 0) {
       STATE.task.tasks[i].message = log;
     }
     return sendTaskState();
   };
-  args.onKeywordSuccess = (keyword) => {
+  opts.onKeywordSuccess = (keyword) => {
     const i = STATE.task.tasks.findIndex((x) => x.name == keyword);
     if (i >= 0) {
       STATE.task.tasks[i].success = true;
@@ -263,88 +314,104 @@ ipcMain.on('task start', async (sender, args) => {
     return sendTaskState();
   };
 
-  var _URLS = [];
-
-  if (args.type == 'KEYWORD') {
-    for (var keyword of args.keywords) {
-      STATE.task.tasks.push({
-        name: keyword,
-        message: 'waiting...',
-        success: false,
-      });
-      sendTaskState();
-    }
-
-    await getItemListBykeyword.get(args, (urls) => {
-      STATE.task.tasks = [];
-      sendTaskState();
-      return (_URLS = urls);
+  opts.onComplete = async (results) => {
+    await Func.SaveToCollection({
+      results,
+      keywords: opts.keywords,
+      global,
     });
-  } else {
-    // Tambahkan semua username toko kedalam task dalam status waiting
-    for (var username of args.usernames) {
-      STATE.task.tasks.push({
-        name: username,
-        message: 'waiting...',
-        success: false,
-      });
-      sendTaskState();
-    }
-
-    await getItemListByShop.get(args, (urls) => {
-      STATE.task.tasks = [];
-      sendTaskState();
-      return (_URLS = urls);
-    });
-  }
-
-  for (var i = 1; i <= args.core; i++) {
-    STATE.task.tasks.push({
-      name: 'Tab ' + i,
-      message: 'waiting',
-      success: false,
-    });
+    STATE.task.tasks = [];
+    STATE.task.loading = false;
     sendTaskState();
-  }
+    SEND_COLLECTION_LIST();
+    return mainWindow?.webContents.send('task scrap complete');
+  };
 
-  return getProductDetail.get({
-    global,
-    urls: _URLS,
-    core: args.core,
-    onSuccess: (id) => {
-      const tabName = `Tab ${id + 1}`;
-      const index = STATE.task.tasks.findIndex((x) => x.name == tabName);
-      if (index >= 0) STATE.task.tasks[index].success = true;
-      return sendTaskState();
-    },
-    onLog: (id, log) => {
-      const tabName = `Tab ${id + 1}`;
-      const index = STATE.task.tasks.findIndex((x) => x.name == tabName);
-      if (index >= 0) STATE.task.tasks[index].message = log;
-      return sendTaskState();
-    },
-    onComplete: async (results) => {
-      // Save data to collection
-      await Func.SaveToCollection({
-        results,
-        keywords:
-          typeof args.usernames != 'undefined' ? args.usernames : args.keywords,
-        global,
-      });
-      STATE.task.tasks = [];
-      STATE.task.loading = false;
-      sendTaskState();
-      SEND_COLLECTION_LIST();
-      return mainWindow?.webContents.send('task scrap complete');
-    },
-    onCaptcha: () => {
-      mainWindow?.webContents.send('message', {
-        title: 'Terdeteksi captcha',
-        message:
-          'Sistem kami sedang melakukan solving captcha secara otomatis, setelah captcha solved, proses akan berjalan lagi 40 detik setelahnya',
-      });
-    },
-  });
+  console.log('OPTS: ', opts);
+  scrapKeyword.start(opts);
+
+  // var _URLS = [];
+
+  // if (args.type == 'KEYWORD') {
+  //   for (var keyword of args.keywords) {
+  //     STATE.task.tasks.push({
+  //       name: keyword,
+  //       message: 'waiting...',
+  //       success: false,
+  //     });
+  //     sendTaskState();
+  //   }
+
+  //   await getItemListBykeyword.get(args, (urls) => {
+  //     STATE.task.tasks = [];
+  //     sendTaskState();
+  //     return (_URLS = urls);
+  //   });
+  // } else {
+  //   // Tambahkan semua username toko kedalam task dalam status waiting
+  //   for (var username of args.usernames) {
+  //     STATE.task.tasks.push({
+  //       name: username,
+  //       message: 'waiting...',
+  //       success: false,
+  //     });
+  //     sendTaskState();
+  //   }
+
+  //   await getItemListByShop.get(args, (urls) => {
+  //     STATE.task.tasks = [];
+  //     sendTaskState();
+  //     return (_URLS = urls);
+  //   });
+  // }
+
+  // for (var i = 1; i <= args.core; i++) {
+  //   STATE.task.tasks.push({
+  //     name: 'Tab ' + i,
+  //     message: 'waiting',
+  //     success: false,
+  //   });
+  //   sendTaskState();
+  // }
+
+  // return getProductDetail.get({
+  //   global,
+  //   urls: _URLS,
+  //   core: args.core,
+  //   onSuccess: (id) => {
+  //     const tabName = `Tab ${id + 1}`;
+  //     const index = STATE.task.tasks.findIndex((x) => x.name == tabName);
+  //     if (index >= 0) STATE.task.tasks[index].success = true;
+  //     return sendTaskState();
+  //   },
+  //   onLog: (id, log) => {
+  //     const tabName = `Tab ${id + 1}`;
+  //     const index = STATE.task.tasks.findIndex((x) => x.name == tabName);
+  //     if (index >= 0) STATE.task.tasks[index].message = log;
+  //     return sendTaskState();
+  //   },
+  //   onComplete: async (results) => {
+  //     // Save data to collection
+  //     await Func.SaveToCollection({
+  //       results,
+  //       keywords:
+  //         typeof args.usernames != 'undefined' ? args.usernames : args.keywords,
+  //       global,
+  //     });
+  //     STATE.task.tasks = [];
+  //     STATE.task.loading = false;
+  //     sendTaskState();
+  //     SEND_COLLECTION_LIST();
+  //     return mainWindow?.webContents.send('task scrap complete');
+  //   },
+  //   onCaptcha: () => {
+  //     mainWindow?.webContents.send('message', {
+  //       title: 'Terdeteksi captcha',
+  //       message:
+  //         'Sistem kami sedang melakukan solving captcha secara otomatis, setelah captcha solved, proses akan berjalan lagi 40 detik setelahnya',
+  //     });
+  //   },
+  // });
 });
 
 const SEND_COLLECTION_LIST = async () => {
@@ -532,7 +599,7 @@ ipcMain.on('close app', () => {
 ipcMain.on('get current color', () => {
   return mainWindow?.webContents.send(
     'current color',
-    fs.readFileSync(global.current_color, 'utf-8')
+    fs.readFileSync(global.current_color, 'utf-8') || '#000'
   );
 });
 

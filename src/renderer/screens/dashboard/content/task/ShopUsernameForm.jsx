@@ -45,7 +45,7 @@ export default function ShopUsernameForm(args) {
   }, [args.loading]);
   return (
     <div className="keyword-form">
-      <Dialog
+      {/* <Dialog
         open={dialogOpen}
         title={dialogTitle}
         message={dialogMessage}
@@ -108,7 +108,8 @@ export default function ShopUsernameForm(args) {
         >
           Scrap
         </Button>
-      )}
+      )} */}
+      Belum tersedia
     </div>
   );
 }

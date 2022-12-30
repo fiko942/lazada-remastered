@@ -1,8 +1,8 @@
 {
-  "productName": "AliExpress Scrapper Remastered",
+  "productName": "Lazada Scrapper Remastered",
   "appName": {
-    "full": "AliExpress Scrapper",
-    "start": "AliExpress",
+    "full": "Lazada Scrapper",
+    "start": "Lazada",
     "end": "Scrapper"
   },
   "appVersion": {
@@ -11,33 +11,34 @@
   },
   "api": {
     "base": "https://appcenter.ziqva.com/",
-    "updates": "https://aliex.static.ziqva.com/updates.json"
+    "updates": "https://laz.static.ziqva.com/updates.json"
   },
   "files": {
-    "session": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\session.json",
-    "collection_list": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\collection_list.json",
-    "pengaturan_rumus": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\pengaturan_rumus.json",
-    "pengaturan_shuffle": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\pengaturan_shuffle.json",
-    "pengaturan_kata_melanggar": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\pengaturan_kata_melanggar.json",
-    "pengaturan_general": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\pengaturan_general.json",
-    "template_tokped": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\template_tokped.aliexziqva1"
+    "session": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\session.json",
+    "collection_list": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\collection_list.json",
+    "pengaturan_rumus": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\pengaturan_rumus.json",
+    "pengaturan_shuffle": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\pengaturan_shuffle.json",
+    "pengaturan_kata_melanggar": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\pengaturan_kata_melanggar.json",
+    "pengaturan_general": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\pengaturan_general.json",
+    "template_tokped": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\template_tokped.lazziqva1"
   },
   "dirs": {
-    "collection": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\collections\\",
-    "tmp": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\_tmp\\"
+    "collection": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\collections\\",
+    "tmp": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\_tmp\\",
+    "V8_USER_PREFERENCES": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\V8_USER_PREFERENCES\\"
   },
   "contacts": {
     "WHATSAPP": "https://wa.me/6281259666712",
     "EMAIL": "mailto:cs@ziqva.com"
   },
-  "V8_USER_PREFERENCES": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\V8_USER_PREFERENCES\\",
+  "V8_USER_PREFERENCES": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\V8_USER_PREFERENCES\\",
   "WEBKIT_EXTENSIONS": [
     {
-      "path": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\WEBKIT_EXTENSIONS\\BlockImage",
-      "download_url": "https://aliex.static.ziqva.com/extensions/BlockImage.zip",
+      "path": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\WEBKIT_EXTENSIONS\\BlockImage",
+      "download_url": "https://laz.static.ziqva.com/extensions/BlockImage.zip",
       "name": "BlockImage"
     }
   ],
-  "current_color": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\current_color.txt",
-  "main_session": "C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered\\main_session.txt"
+  "current_color": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\current_color.txt",
+  "main_session": "C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered\\main_session.txt"
 }

@@ -85,7 +85,7 @@
       "json"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|app|csi|loadTimes|runtime|contentWindow|codecs|languages|permissions|plugins|vendor|webdriver|outerdimensions)$": "<rootDir>/.erb/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
     "setupFiles": [
@@ -101,6 +101,10 @@
     "transform": {
       "\\.(ts|tsx|js|jsx)$": "ts-jest"
     }
+  },
+  "peerDependencies": {
+    "puppeteer-extra-plugin": "*",
+    "merge-deep": "github:godtoy/merge-deep#master"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -127,6 +131,8 @@
     "openurl": "^1.1.1",
     "path-browserify": "^1.0.1",
     "puppeteer": "^19.4.1",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
     "puppeteer-page-proxy": "^1.3.0",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
@@ -236,7 +242,8 @@
       "output": "release/build"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      "./node_modules/puppeteer-extra-plugin-stealth/evasions/**/*"
     ]
   },
   "collective": {
@@ -245,6 +252,11 @@
   "devEngines": {
     "node": ">=14.x",
     "npm": ">=7.x"
+  },
+  "resolutions": {
+    "puppeteer-extra": "*",
+    "puppeteer-extra-plugin": "*",
+    "puppeteer-extra-plugin-stealth": "*"
   },
   "electronmon": {
     "patterns": [

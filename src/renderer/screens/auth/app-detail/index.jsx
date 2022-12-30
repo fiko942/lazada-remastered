@@ -43,8 +43,8 @@ export default function Index() {
     >
       <img src={icon} className="icon" />
       <div className="name">
-        <div className="title">AliExpress</div>
-        <div className="subtitle">Scrapper v{global.appVersion.code}</div>
+        <div className="title">Lazada</div>
+        <div className="subtitle"> Scrapper v{global.appVersion.code}</div>
       </div>
       <div className="action-bar" style={{ '-webkit-app-region': 'no-drag' }}>
         <button className="action" onClick={handleMinimize.bind(this)}>
