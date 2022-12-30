@@ -1,0 +1,96 @@
+.dashboard__task {
+  .main-form {
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 20px;
+    justify-items: center;
+    justify-content: center;
+    width: 600px;
+    max-width: calc(100vw - 20px);
+    .keyword-form {
+      margin-top: 20px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      .general-input {
+        width: 100%;
+      }
+      .group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        &.small {
+          width: fit-content;
+          margin: auto;
+        }
+      }
+    }
+  }
+
+  .task-modal-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 70px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+  }
+
+  .task-modal-close {
+    z-index: 1001;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #fff;
+  }
+
+  .task-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+    padding: 10px;
+
+    .list-container {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .actions {
+      display: flex;
+      margin-left: auto;
+      margin-right: 0;
+      margin-top: 20px;
+      width: fit-content;
+    }
+  }
+
+  .task__login {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+
+    .info-icon {
+      color: dimgray;
+      font-size: 20px;
+      padding: 0;
+      margin: 0;
+      margin-left: 20px;
+      margin-top: -3px;
+    }
+
+    .login-info-text {
+      color: dimgray;
+      font-size: 14px;
+      margin-left: 5px;
+    }
+  }
+}

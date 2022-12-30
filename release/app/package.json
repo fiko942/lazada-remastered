@@ -1,0 +1,18 @@
+{
+  "name": "aliexpress-scrapper-ziqva",
+  "version": "0.0.11",
+  "description": "made by ZiqvaStudios - KampungSongo",
+  "license": "MIT",
+  "author": {
+    "name": "Kampung Songo",
+    "email": "cs@ziqva.com",
+    "url": "https://ziqva.com"
+  },
+  "main": "./dist/main/main.js",
+  "scripts": {
+    "rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "postinstall": "npm run rebuild && npm run link-modules",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
+  },
+  "dependencies": {}
+}

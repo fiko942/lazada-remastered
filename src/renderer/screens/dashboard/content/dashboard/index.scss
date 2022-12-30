@@ -1,0 +1,38 @@
+.dashboard .dashboard__dashboard {
+  .wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+    .title {
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      margin: auto;
+      font-size: 18px;
+      .icon {
+        margin-left: 10px;
+        font-size: 20px;
+      }
+    }
+    .separator {
+      margin: 10px 0;
+    }
+    .profile {
+      padding: 10px;
+    }
+    .billing {
+      background: blue;
+      padding: 10px;
+    }
+    table,
+    tr {
+      width: 100%;
+
+      td:last-child {
+        text-align: right;
+      }
+    }
+  }
+}

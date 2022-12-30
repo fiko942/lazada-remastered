@@ -1,0 +1,38 @@
+.auth__unregistered {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+
+  .device-warning {
+    max-width: 100%;
+    width: 300px;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -60%);
+  }
+
+  .input-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    margin-top: 120px;
+  }
+
+  .machine-id {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: #000;
+    font-size: 13px;
+  }
+
+  .helper-container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+  }
+}

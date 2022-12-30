@@ -1,0 +1,197 @@
+$navbarHeight: 70px;
+
+.dashboard__settings {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: calc(100vh - $navbarHeight);
+  max-height: calc(100vh - $navbarHeight);
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+
+  .menu-container {
+    padding: 10px;
+    max-width: 200px;
+    max-height: calc(100vh - $navbarHeight);
+    overflow: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    height: calc(100vh - $navbarHeight);
+
+    .list {
+      position: absolute;
+      height: calc(100vh - $navbarHeight);
+      .menu {
+        border-radius: 10px;
+        overflow: hidden;
+        &.active {
+          box-shadow: 0px 0px 6px #000;
+        }
+      }
+
+      .bottom-options {
+        position: absolute;
+        width: 100%;
+        height: fit-content;
+        bottom: 20px;
+        justify-content: center;
+      }
+    }
+  }
+
+  .content {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: calc(100vw - 220px);
+    margin-left: 220px;
+    height: calc(100vh - $navbarHeight);
+    overflow: hidden;
+    overflow-y: auto;
+
+    .section-title {
+      color: dimgray;
+    }
+
+    .section-title::before {
+      content: '~ ';
+    }
+
+    .rumus-container {
+      padding: 10px;
+      margin-top: 20px;
+
+      .profile-option {
+        width: fit-content;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    }
+
+    .rumus-container.default-value {
+      display: flex;
+      gap: 10px;
+      .val {
+        flex: 0.25;
+      }
+    }
+
+    .rumus-container.price {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 100px;
+
+      .actions {
+        display: flex;
+        margin-top: 15px;
+        gap: 5px;
+        align-items: center;
+      }
+    }
+
+    .rumus-container.rumus {
+      .add {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+        .fit-content {
+          width: fit-content;
+        }
+      }
+      .list {
+        border: 1px solid #f65421;
+        margin-top: 20px;
+        padding: 10px;
+        width: fit-content;
+        border-radius: 6px;
+        .item {
+          white-space: nowrap;
+        }
+        .num-list {
+          font-size: 13px;
+          margin-right: 10px;
+          &::after {
+            content: '. ';
+          }
+        }
+        .range {
+          // transform: rotate(90deg);
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+        .then {
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+        .add {
+          padding: 6px 10px;
+          margin: -10px;
+          margin-left: 5px;
+          border-radius: 7px;
+          width: fit-content;
+          &.idr {
+            border: 1px solid #75afab;
+            color: #75afab;
+            background: #e3fef7;
+          }
+          &.percent {
+            border: 1px solid #d22138;
+            color: #d22138;
+            background: #ffdbe2;
+          }
+        }
+        .delete {
+          background: rgba(255, 87, 34, 0.8);
+          color: #fff;
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+
+  .shuffle {
+    padding: 15px;
+    width: 100%;
+    height: calc(100vh - 100px);
+    .btn-save-2 {
+      width: fit-content;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 500px;
+    }
+
+    .btn-save {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
+  }
+
+  .kata-melanggar {
+    padding: 15px;
+    width: 500px;
+    position: relative;
+    height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    padding-right: 20px;
+    .btn-save {
+      width: fit-content;
+      display: flex;
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+}

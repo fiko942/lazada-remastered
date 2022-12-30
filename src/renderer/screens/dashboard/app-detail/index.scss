@@ -1,0 +1,148 @@
+.app-detail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  height: 70px;
+  width: 100vw;
+  border-radius: 0 !important;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  border-radius: 0;
+
+  .icon {
+    max-width: 40px;
+    margin-left: 10px;
+  }
+
+  .name {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    margin-left: 15px;
+    align-items: center;
+    .title {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+    }
+    .subtitle {
+      font-size: 13px;
+      font-weight: 300;
+      font-style: italic;
+      margin-right: -20px;
+    }
+  }
+
+  .routes {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    gap: 10px;
+    margin-left: 40px;
+
+    .route {
+      color: #fff;
+      text-decoration: none !important;
+      font-weight: 500;
+      transition: 0.1s ease-in-out all;
+      display: flex;
+      flex-direction: column;
+      height: 70px;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      &.active {
+        background-image: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0),
+          rgba(77, 68, 68, 0.5)
+        );
+      }
+
+      .icon {
+        margin: auto;
+      }
+
+      .name {
+        width: fit-content;
+        text-align: center;
+        justify-content: center;
+        margin: auto;
+        margin-top: 0px;
+        font-size: 14px;
+        font-weight: 300;
+      }
+    }
+  }
+
+  .action-bar {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    display: flex;
+    gap: 2px;
+
+    .action {
+      padding: 0;
+      outline: none !important;
+      margin: 0;
+      border: none !important;
+      padding: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .icon {
+        font-size: 14px;
+        display: flex;
+        margin: auto;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      &.close {
+        &:hover {
+          background: rgba(255, 0, 0, 0.7);
+        }
+      }
+    }
+  }
+
+  .custom-theme {
+    position: fixed;
+    top: 18px;
+    right: 70px;
+    -webkit-app-region: no-drag;
+    z-index: 9999999;
+
+    .close {
+      display: flex;
+      margin-left: auto;
+      margin-right: 0;
+      width: fit-content;
+      padding: 3px;
+      .icon {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .check4update {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    bottom: 10px;
+    z-index: 9999999;
+    right: 10px;
+
+    .log {
+      position: absolute;
+      color: #fff;
+      font-size: 10px;
+      bottom: 0px;
+      right: 30px;
+    }
+  }
+}
