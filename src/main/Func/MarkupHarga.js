@@ -6,7 +6,10 @@ export function SingleMarkupHarga(row, profile) {
 
 const singleRowMarkup = (rowData, profile) => {
   rowData.price = parseInt(rowData.price);
-  console.log('Harga lama: ', rowData.price);
+  rowData.original_price = rowData.price;
+  var perkiraan_minimal = undefined;
+  var perkiraan_maksimal = undefined;
+
   for (var rumus of profile.rumus) {
     if (rowData.price <= rumus.to && rowData.price >= rumus.from) {
       const rangeVal = parseInt(
@@ -22,6 +25,29 @@ const singleRowMarkup = (rowData, profile) => {
       );
 
       rowData.price += parseInt(newPrice);
+      perkiraan_minimal =
+        rowData.original_price +
+        parseInt(
+          rumus.type == '%'
+            ? getValueOfPercentage(
+                parseInt(rowData.original_price),
+                parseInt(rumus.increase.range.from)
+              )
+            : parseInt(rumus.increase.range.from)
+        );
+
+      perkiraan_maksimal =
+        rowData.original_price +
+        parseInt(
+          rumus.type == '%'
+            ? getValueOfPercentage(
+                parseInt(rowData.original_price),
+                parseInt(rumus.increase.range.to)
+              )
+            : parseInt(rumus.increase.range.to)
+        );
+
+      break;
     }
   }
 
@@ -29,7 +55,14 @@ const singleRowMarkup = (rowData, profile) => {
   rowData.price += parseInt(profile.additional_price);
   // * Penerapan pembulatan
   rowData.price = round(rowData.price, profile.pembulatan);
-  console.log('Harga baru: ', rowData.price);
+  rowData.perkiraan_minimal = round(
+    perkiraan_minimal + parseInt(profile.additional_price),
+    profile.pembulatan
+  );
+  rowData.perkiraan_maksimal = round(
+    perkiraan_maksimal + parseInt(profile.additional_price),
+    profile.pembulatan
+  );
   return rowData;
 };
 
@@ -43,7 +76,7 @@ export default function MarkupHarga(collection, profile) {
 }
 
 function getValueOfPercentage(price, increase) {
-  return (parseInt(price) * parseInt(increase)) / 100;
+  return parseInt((parseInt(price) * parseInt(increase)) / 100);
 }
 
 function round(from, num) {

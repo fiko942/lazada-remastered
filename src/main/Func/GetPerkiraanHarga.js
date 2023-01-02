@@ -16,11 +16,10 @@ export default async function getPerkiraanHargaOutput({ data, global }) {
   } else {
     let tmp = [];
     for (var row of data) {
-      let d = row;
-      d.perkiraan_harga = SingleMarkupHarga(row, profile[0]).price;
-      tmp.push(d);
+      row = SingleMarkupHarga(row, profile[0]);
+      tmp.push(row);
     }
-    console.log('Data: ', tmp[0]);
+    console.log(tmp);
     return tmp;
   }
 }
