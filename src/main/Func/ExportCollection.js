@@ -219,7 +219,7 @@ async function downloadTemplate(global) {
     const downloader = new Downloader({
       url: 'https://aliex.static.ziqva.com/file/template.xlsx',
       directory:
-        'C:\\com.ziqvakampungsongo\\ziqva-aliexpress-scrapper-remastered',
+        'C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered',
       fileName: global.files.template_tokped.split('\\').pop(),
     });
     downloader.download();

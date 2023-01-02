@@ -235,14 +235,6 @@ export default function (args) {
                   >
                     Export
                   </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      handleCdn();
-                      handleMenuClose();
-                    }}
-                  >
-                    CDN
-                  </MenuItem>
                 </Menu>
               </div>
             )}

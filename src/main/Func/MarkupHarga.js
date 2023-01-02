@@ -1,40 +1,56 @@
 import RandomNumberofRange from './RandomNumberofRange';
 
+export function SingleMarkupHarga(row, profile) {
+  return singleRowMarkup(row, profile);
+}
+
+const singleRowMarkup = (rowData, profile) => {
+  rowData.price = parseInt(rowData.price);
+  console.log('Harga lama: ', rowData.price);
+  for (var rumus of profile.rumus) {
+    if (rowData.price <= rumus.to && rowData.price >= rumus.from) {
+      const rangeVal = parseInt(
+        RandomNumberofRange(
+          parseInt(rumus.increase.range.from),
+          parseInt(rumus.increase.range.to)
+        )
+      );
+      const newPrice = parseInt(
+        rumus.type == '%'
+          ? getValueOfPercentage(parseInt(rowData.price), parseInt(rangeVal))
+          : rangeVal
+      );
+
+      rowData.price += parseInt(newPrice);
+    }
+  }
+
+  // * Penerapan harga tambahan
+  rowData.price += parseInt(profile.additional_price);
+  // * Penerapan pembulatan
+  rowData.price = round(rowData.price, profile.pembulatan);
+  console.log('Harga baru: ', rowData.price);
+  return rowData;
+};
+
 export default function MarkupHarga(collection, profile) {
   var data = collection;
   for (let r = 0; r < data.length; r++) {
     // * Row data looping
-    for (var rumus of profile.rumus) {
-      if (data[r].price <= rumus.to && data[r].price >= rumus.from) {
-        const rangeVal = RandomNumberofRange(
-          rumus.increase.range.from,
-          rumus.increase.range.to
-        );
-        const newPrice =
-          rumus.type == '%'
-            ? getValueOfPercentage(data[r].price, rangeVal)
-            : data[r].price + rangeVal;
-        data[r].price = newPrice;
-      }
-    }
-
-    // * Penerapan harga tambahan
-    data[r].price += profile.additional_price;
-    // * Penerapan pembulatan
-    data[r].price = data[r].price.roundTo(profile.pembulatan);
+    data[r] = singleRowMarkup(data[r], profile);
   }
   return data;
 }
 
 function getValueOfPercentage(price, increase) {
-  return (price * increase) / 100;
+  return (parseInt(price) * parseInt(increase)) / 100;
 }
 
-Number.prototype.roundTo = function (num) {
-  var resto = this % num;
+function round(from, num) {
+  var resto = from % num;
   if (resto <= num / 2) {
-    return this - resto;
+    return from - resto;
   } else {
-    return this + num - resto;
+    return from + num - resto;
   }
-};
+}

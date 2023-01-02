@@ -424,7 +424,7 @@ const SEND_COLLECTION_LIST = async () => {
 ipcMain.on('get collection list', SEND_COLLECTION_LIST);
 
 ipcMain.on('get collection data', async (sender, path) =>
-  Func.GetCollectionData(path, (data) => {
+  Func.GetCollectionData(path, global, (data) => {
     mainWindow?.webContents.send('collection data', data);
   })
 );

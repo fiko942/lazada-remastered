@@ -1,5 +1,7 @@
 export default function RandomNumberofRange(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  const difference = max - min;
+  var rand = Math.random();
+  rand = Math.floor(rand * difference);
+  rand = rand + min;
+  return rand;
 }
