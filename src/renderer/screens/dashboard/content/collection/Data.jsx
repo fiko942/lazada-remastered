@@ -1,6 +1,7 @@
 import { TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 function formatRupiah(angka, prefix) {
   var number_string = angka.replace(/[^,\d]/g, '').toString(),
@@ -71,8 +72,26 @@ export default function Data(args) {
     },
     {
       name: 'Harga',
-      selector: (row) => row.price,
-      format: (row) => formatRupiah(row.price.toString(), 'Rp. '),
+      selector: (row) => row.original_price,
+      format: (row) => (
+        <div className="price">
+          <div className="original">
+            {formatRupiah(row.original_price.toString(), 'Rp. ')}
+          </div>
+          <div className="markup">
+            <ArrowOutwardIcon className="icon" sx={{ fontSize: '13px' }} />
+            <div className="range">
+              <div className="from">
+                {formatRupiah(row.perkiraan_minimal.toString(), 'Rp. ')}
+              </div>
+              <div className="divider">-</div>
+              <div className="to">
+                {formatRupiah(row.perkiraan_maksimal.toString(), 'Rp. ')}
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       sortable: true,
     },
   ];

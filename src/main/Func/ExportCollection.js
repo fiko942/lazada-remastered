@@ -102,13 +102,16 @@ export default async function ExportCollection({
         'ISI Template Impor Produk'
       );
       for (var row of data) {
-        const generated_random_title =
+        var generated_random_title =
           shuffleData.start_title[
             Math.floor(Math.random() * shuffleData.start_title.length)
           ];
+        generated_random_title = generated_random_title
+          ? generated_random_title + ' '
+          : '';
         worksheet.addRow([
           '',
-          capitalize(max(70, generated_random_title + ' ' + row.title)),
+          capitalize(max(70, generated_random_title + row.title)),
           max(
             2000,
             shuffleData.start_desc +
@@ -170,13 +173,16 @@ export default async function ExportCollection({
     }
     const worksheet = await workbook.getWorksheet('ISI Template Impor Produk');
     for (var row of rows_collections_merged) {
-      const generated_random_title =
+      var generated_random_title =
         shuffleData.start_title[
           Math.floor(Math.random() * shuffleData.start_title.length)
         ];
+      generated_random_title = generated_random_title
+        ? generated_random_title + ' '
+        : '';
       worksheet.addRow([
         '',
-        capitalize(max(70, generated_random_title + ' ' + row.title)),
+        capitalize(max(70, generated_random_title + row.title)),
         max(
           2000,
           shuffleData.start_desc +
@@ -218,8 +224,7 @@ async function downloadTemplate(global) {
   if (!fs.existsSync(global.files.template_tokped)) {
     const downloader = new Downloader({
       url: 'https://aliex.static.ziqva.com/file/template.xlsx',
-      directory:
-        'C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered',
+      directory: 'C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered',
       fileName: global.files.template_tokped.split('\\').pop(),
     });
     downloader.download();
