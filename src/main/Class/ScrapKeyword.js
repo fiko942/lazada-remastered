@@ -140,12 +140,14 @@ export default class {
           const data = JSON.parse(json);
           const items = data.mods.listItems;
           for (var item of items) {
+            console.log(item.skuId);
             res.push({
               title: item.name,
               description: item.description.join('\n'),
               price: parseInt(item.price),
               stock: Func.RandomNumberofRange(10, 99),
               images: item.thumbs.map((x) => x.image + '._webp'),
+              sku: item.skuId,
             });
           }
           this.results.push(...res);

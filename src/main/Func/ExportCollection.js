@@ -102,6 +102,7 @@ export default async function ExportCollection({
         'ISI Template Impor Produk'
       );
       for (var row of data) {
+        row.images = row.images.map((x) => x.replace('._webp', ''));
         var generated_random_title =
           shuffleData.start_title[
             Math.floor(Math.random() * shuffleData.start_title.length)
@@ -132,7 +133,7 @@ export default async function ExportCollection({
           '',
           '',
           '',
-          'laz_' + row.id,
+          'laz_' + row.sku,
           'Aktif',
           row.stock >= 1000 ? 99 : row.stock,
           row.price,
