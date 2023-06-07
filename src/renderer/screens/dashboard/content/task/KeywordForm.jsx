@@ -22,7 +22,7 @@ export default function KeywordForm(args) {
   const [max_price, setMaxPrice] = useState('');
   const [location, setLocation] = useState(locs[0].val);
   const [filterLocState, setFilterLocState] = useState(false);
-  const [rating, setRating] = useState(1);
+  const [rating, setRating] = useState(0);
 
   const [maxPage, setMaxPage] = useState(1);
   const [dialogMessage, setDialogMessage] = useState('');
@@ -99,7 +99,7 @@ export default function KeywordForm(args) {
         />
         <TextField
           variant="outlined"
-          label="Min price (Rp)"
+          label="Max price (Rp)"
           className="general-input"
           size="small"
           type="number"

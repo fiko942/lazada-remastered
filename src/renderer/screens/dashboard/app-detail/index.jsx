@@ -129,7 +129,15 @@ export default function Index(args) {
       </div>
       <div className="routes" style={{ '-webkit-app-region': 'no-drag' }}>
         {routes.map((route, index) => (
-          <Link to={route.url} className="route" key={index} draggable={false}>
+          <Link
+            to={route.url}
+            className="route"
+            key={index}
+            draggable={false}
+            style={{
+              outline: 'none !important',
+            }}
+          >
             <div className="icon">{route.icon}</div>
             <div className="name">{route.name}</div>
           </Link>
@@ -149,7 +157,7 @@ export default function Index(args) {
           <CloseIcon className="icon" />
         </button>
       </div>
-      <CheckforUpdate />
+      {/* <CheckforUpdate /> */}
     </Card>
   );
 }

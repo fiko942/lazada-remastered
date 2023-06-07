@@ -1,5 +1,5 @@
 {
-  "version": "0.0.11",
+  "version": "1.0.0",
   "description": "made by ZiqvaStudios - Kampung Songo",
   "keywords": [
     "kampung songo",
@@ -167,7 +167,7 @@
     "css-loader": "^6.7.1",
     "css-minimizer-webpack-plugin": "^4.0.0",
     "detect-port": "^1.3.0",
-    "electron": "^20.0.2",
+    "electron": "^25.0.1",
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.2.0",
     "electron-notarize": "^1.2.1",

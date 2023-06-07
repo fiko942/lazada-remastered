@@ -38,7 +38,6 @@ export default function index() {
 
   const listenAllEventFromMain = () => {
     return window.electron.ipcRenderer.once('task state', (state) => {
-      console.log(state);
       setTasks(state.tasks);
       setLoading(state.loading);
       listenAllEventFromMain();
@@ -105,19 +104,6 @@ export default function index() {
             />
           )}
         </Card>
-        <div className="task__login">
-          <InfoIcon className="info-icon" />
-          <Typography
-            className="login-info-text"
-            variant="h6"
-            component="textlogin"
-          >
-            Filter harga tidak berfungsi jika anda belum login, anda dapat login{' '}
-            <Button onClick={handleLogin.bind(this)} size="small">
-              Disini
-            </Button>
-          </Typography>
-        </div>
       </div>
     </>
   );
