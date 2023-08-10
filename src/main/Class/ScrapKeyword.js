@@ -171,7 +171,7 @@ export default class {
         }
 
         // onLog(keyword, 'Berhenti 0.1 detik untukmenghindari captcha');
-        await new Promise((resolve) => setTimeout(resolve, 1 * 1000));
+        await new Promise((resolve) => setTimeout(resolve, getRandomNumber(4, 6) * 1000));
       }
       onKeywordSuccess(keyword);
     }
@@ -181,4 +181,8 @@ export default class {
     }
     return 0;
   }
+}
+
+function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
