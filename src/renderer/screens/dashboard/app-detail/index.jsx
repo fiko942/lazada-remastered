@@ -32,7 +32,7 @@ const routes = [
     icon: <MemoryIcon />,
   },
   {
-    name: 'Collection',
+    name: 'Brankas',
     url: '/dashboard/collection',
     icon: <FeaturedPlayListIcon />,
   },

@@ -40,7 +40,7 @@ export default function Index() {
       <AppDetail />
       <div className="wrapper">
         <div className="title">Whoops</div>
-        <div className="subtitle">{message}</div>
+        <div className="subtitle">Gagal menghubungkan ke server, silahkan cek koneksi anda.</div>
         <img
           src={ErrorStill}
           className="error-image-ilustration"

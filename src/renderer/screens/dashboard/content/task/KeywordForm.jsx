@@ -23,19 +23,28 @@ export default function KeywordForm(args) {
   const [location, setLocation] = useState(locs[0].val);
   const [filterLocState, setFilterLocState] = useState(false);
   const [rating, setRating] = useState(0);
+  const [lazMall, setLazMall] = useState(false)
+  const [sortBy, setSortBy] = useState(sorts[0].val)
 
   const [maxPage, setMaxPage] = useState(1);
   const [dialogMessage, setDialogMessage] = useState('');
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleLocationChange = (e) => setLocation(e.target.value);
+  const handleLocationChange = (e) => {
+    setLocation(e.target.value)
+    setFilterLocState(e.target.value !== 'all')
+  };
   const handleFilterLocStateChange = (e) => setFilterLocState(e.target.checked);
 
   const handleDialogClose = () => setDialogOpen(false);
 
+  const handleSortByChange = (e) => {
+    setSortBy(e.target.value)
+  }
+
   // Change handler
-  const handleKeywordChange = (event) => setKeyword(event.target.value);
+  const handleKeywordChange = (event) => setKeyword(event.target.value.split('\n').join(''));
   const handleMaxPriceChange = (event) => setMaxPrice(event.target.value);
   const handleMinPriceChange = (event) => setMinPrice(event.target.value);
   const handleMaxPageChange = (event) => setMaxPage(event.target.value);
@@ -59,6 +68,8 @@ export default function KeywordForm(args) {
       filter_location_state: filterLocState,
       location,
       rating,
+      lazMall,
+      sortBy
     });
   };
   // End of change handler
@@ -80,6 +91,7 @@ export default function KeywordForm(args) {
         label="Keyword"
         helperText="Pisahkan dengan koma"
         className="general-input"
+        multiline={true}
         required
         size="small"
         disabled={loading}
@@ -108,29 +120,30 @@ export default function KeywordForm(args) {
           onChange={handleMaxPriceChange.bind(this)}
         />
       </div>
-      <TextField
-        variant="outlined"
-        label="Jumlah halaman"
-        size="small"
-        type="number"
-        required
-        disabled={loading}
-        value={maxPage}
-        onChange={handleMaxPageChange.bind(this)}
-      />
-      <FormGroup
+      <div className="group" style={{
+        width: '100%'
+      }}>
+        <TextField
+          variant="outlined"
+          label="Jumlah halaman"
+          size="small"
+          type="number"
+          required
+          disabled={loading}
+          value={maxPage}
+          onChange={handleMaxPageChange.bind(this)}
+        />
+        <FormGroup
         sx={{
           display: 'inline',
           alignItems: 'center',
           justifyContent: 'center',
+          width: '100%'
         }}
         fullWidth
       >
-        <Checkbox
-          checked={filterLocState}
-          onChange={handleFilterLocStateChange.bind(this)}
-        />
-        <FormControl sx={{ width: 'calc(100% - 50px)' }}>
+        
+        <FormControl sx={{ width: 'calc(100% - 0px)' }}>
           <InputLabel size="small" id="lokasi-label">
             Pilih lokasi
           </InputLabel>
@@ -149,7 +162,36 @@ export default function KeywordForm(args) {
             ))}
           </Select>
         </FormControl>
+        {/* <Checkbox
+          checked={filterLocState}
+          onChange={handleFilterLocStateChange.bind(this)}
+        /> */}
       </FormGroup>
+      </div>
+
+      <div className="group">
+        <FormControlLabel control={<Checkbox checked={lazMall} onChange={(e) => setLazMall(x => !x)} />} label="LazMall" />
+        <FormControl sx={{ width: 'calc(100% - 0px)' }}>
+          <InputLabel size="small" id="lokasi-label">
+            Urutkan Berdasarkan
+          </InputLabel>
+          <Select
+            size="small"
+            labelId="lokasi-label"
+            id="lokasi"
+            label="Pilih lokasi"
+            value={sortBy}
+            onChange={handleSortByChange.bind(this)}
+          >
+            {sorts.map((loc, i) => (
+              <MenuItem key={i} value={loc.val}>
+                {loc.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+      
       <FormGroup>
         <Typography component="legend">Rating</Typography>
         <Rating
@@ -179,6 +221,10 @@ export default function KeywordForm(args) {
 
 const locs = [
   {
+    name: "Semua lokasi",
+    val: "all"
+  },
+  {
     name: 'Dalam negeri',
     val: 'Local',
   },
@@ -186,4 +232,31 @@ const locs = [
     name: 'Luar negeri',
     val: 'Overseas',
   },
+  {
+    name: "Jabodetabek",
+    val: 'SHIPPING_REGION:350726'
+  },
+  {
+    "name": "Surabaya",
+    "val": "SHIPPING_REGION:350709"
+  },
+  {
+    "name": "Bandung",
+    "val": "SHIPPING_REGION:1697060"
+  }
 ];
+
+const sorts = [
+  {
+    name: "Terkait",
+    val: 'default'
+  },
+  {
+    name: "Harga Rendah ke Tinggi",
+    val: "priceasc" 
+  },
+  {
+    name: "Harga Tinggi ke Rendah",
+    val: 'pricedesc'
+  }
+]

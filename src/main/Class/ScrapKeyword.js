@@ -87,7 +87,10 @@ export default class {
       onKeywordSuccess,
       onComplete,
       totalChange,
+      sortBy,
+      lazMall
     } = args;
+
     this.stopped = false;
     this.onComplete = onComplete;
     const { browser, page } = await Browser({
@@ -109,11 +112,19 @@ export default class {
           return 1;
         }
         onLog(keyword, 'Scan halaman ' + (i + 1));
-        const navUrl = `https://www.lazada.co.id/catalog/?ajax=true&from=input${
+        var navUrl = `https://www.lazada.co.id/catalog/?ajax=true&from=input${
           filterLocation ? `&location=${location}` : ''
         }${
           minPrice > 0 || maxPrice > 0 ? `&price=${minPrice}-${maxPrice}` : ''
         }&q=${keyword.replaceAll(' ', '%20')}&rating=${rating}&page=${i + 1}`;
+        
+        if(lazMall){
+          navUrl+= '&service=official'
+        }
+
+        if(sortBy !== 'default') {
+          navUrl+= '&sort='+sortBy
+        }
 
         var loop_fetch = true;
         do {
@@ -140,14 +151,13 @@ export default class {
           const data = JSON.parse(json);
           const items = data.mods.listItems;
           for (var item of items) {
-            console.log(item.skuId);
             res.push({
               title: item.name,
-              description: item.description.join('\n'),
+              description: item.description.join('\n').trim().length < 1 ? item.name : item.description.join('\n'),
               price: parseInt(item.price),
               stock: Func.RandomNumberofRange(10, 99),
               images: item.thumbs.map((x) => x.image + '._webp'),
-              sku: item.skuId,
+              sku: item.sku,
             });
           }
           this.results.push(...res);
@@ -160,8 +170,8 @@ export default class {
           console.log('Failed parse: ' + err.message);
         }
 
-        onLog(keyword, 'Berhenti 15 detik untuk menghindari captcha');
-        await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+        // onLog(keyword, 'Berhenti 0.1 detik untukmenghindari captcha');
+        await new Promise((resolve) => setTimeout(resolve, 1 * 1000));
       }
       onKeywordSuccess(keyword);
     }

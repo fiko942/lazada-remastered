@@ -243,7 +243,6 @@ ipcMain.on('task start', async (sender, args) => {
   STATE.task.loading = true;
   args.global = global;
   STATE.task.current_type = args.type;
-  console.log('task start ARGUMENTS: ', args);
 
   var opts = {};
 
@@ -277,6 +276,8 @@ ipcMain.on('task start', async (sender, args) => {
   opts.filterLocation = args.filter_location_state;
   opts.location = args.location;
   opts.rating = args.rating;
+  opts.lazMall = args.lazMall
+  opts.sortBy = args.sortBy
 
   // // Data yang akan berubah terhadap sisi front end
   for (var keywords of opts.keywords) {

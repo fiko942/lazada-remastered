@@ -26,7 +26,7 @@ export default async function FilterKataMelanggar(
     }
     await Promise.all(tasks);
     return onSuccess(
-      `${total_collection} collection berhasil difilter dengan jumlah item ${total_item} dan total kata melanggar ${total_kata_melanggar}.`
+      `${total_collection} brankas berhasil difilter dengan jumlah item ${total_item} dan total kata melanggar ${total_kata_melanggar}.`
     );
   } catch (err) {
     return onSuccess(
@@ -38,18 +38,7 @@ export default async function FilterKataMelanggar(
 async function filterSingleCollection(collection_data, badwords, path) {
   for (var r = 0; r < collection_data.length; r++) {
     // * Loop per collection data row
-    for (var b = 0; b < badwords.length; b++) {
-      // * Loop per kata melanggar
-
-      collection_data[r].title = collection_data[r].title.replacei(
-        badwords[b],
-        ''
-      );
-      collection_data[r].description = collection_data[r].description.replacei(
-        badwords[b],
-        ''
-      );
-    }
+    collection_data[r].title = removeWordsCaseInsensitive(collection_data[r].title, badwords)
     total_item++;
   }
   return fs.writeFileSync(path, JSON.stringify(collection_data), 'utf-8');
@@ -61,3 +50,12 @@ String.replacei = String.prototype.replacei = function (rep, rby) {
     ? this
     : this.substr(0, pos) + rby + this.substr(pos + rep.length);
 };
+
+
+
+function removeWordsCaseInsensitive(paragraph, wordsToRemove) {
+  const words = paragraph.split(' ');
+  const modifiedWords = words.filter(word => !wordsToRemove.includes(word.toLowerCase()));
+  const modifiedParagraph = modifiedWords.join(' ');
+  return modifiedParagraph;
+}
