@@ -36,9 +36,10 @@ export default async function FilterKataMelanggar(
 }
 
 async function filterSingleCollection(collection_data, badwords, path) {
+  const pattern = new RegExp(`\\b(?:${badwords.map(word => word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')})\\b`, 'gi');
   for (var r = 0; r < collection_data.length; r++) {
     // * Loop per collection data row
-    collection_data[r].title = removeWordsCaseInsensitive(collection_data[r].title, badwords)
+    collection_data[r].title = collection_data[r].title.replace(pattern, '').replace(/\s+/g, ' ').trim();
     total_item++;
   }
   return fs.writeFileSync(path, JSON.stringify(collection_data), 'utf-8');

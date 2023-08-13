@@ -4,6 +4,8 @@ import axios from 'axios';
 import Browser from '../Func/Browser';
 import Func from '../Func';
 
+console.log(process.argv)
+
 export default class {
   constructor() {
     this.stopped = false;
@@ -171,7 +173,8 @@ export default class {
         }
 
         // onLog(keyword, 'Berhenti 0.1 detik untukmenghindari captcha');
-        await new Promise((resolve) => setTimeout(resolve, getRandomNumber(4, 6) * 1000));
+        // await new Promise((resolve) => setTimeout(resolve, getRandomNumber(4, 6) * 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       onKeywordSuccess(keyword);
     }
