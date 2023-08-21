@@ -174,7 +174,7 @@ export default class {
 
         // onLog(keyword, 'Berhenti 0.1 detik untukmenghindari captcha');
         // await new Promise((resolve) => setTimeout(resolve, getRandomNumber(4, 6) * 1000));
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 15000));
       }
       onKeywordSuccess(keyword);
     }
