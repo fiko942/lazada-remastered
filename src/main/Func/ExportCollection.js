@@ -1,14 +1,14 @@
 import fs from 'fs';
 import Downloader from 'nodejs-file-downloader';
 import { dialog } from 'electron';
+import xlsx from 'xlsx-populate';
+import exceljs from 'exceljs';
 import GetDefaultProfile from './GetDefaultProfile';
 import MarkupHarga from './MarkupHarga';
 import GetGeneralSettings from './GetGeneralSettings';
 import GetShuffleData from './GetShuffleData';
 import Distribute from './Distribute';
 import Shuffle from './Shuffle';
-
-import exceljs from 'exceljs';
 
 export default async function ExportCollection({
   global,
@@ -19,20 +19,17 @@ export default async function ExportCollection({
   custom_template,
 }) {
   // * Download the template
-  await downloadTemplate(global);
   console.log('Custom template: ', custom_template);
-  const templatePath = custom_template
-    ? global.files.template_tokped
-    : (
-        await dialog.showOpenDialogSync({
-          title: 'Pilih templat tokopedia',
-          filters: [
-            {
-              extensions: ['xlsx'],
-            },
-          ],
-        })
-      )[0];
+  const templatePath = (
+    await dialog.showOpenDialogSync({
+      title: 'Pilih templat tokopedia',
+      filters: [
+        {
+          extensions: ['xlsx'],
+        },
+      ],
+    })
+  )[0];
 
   if (typeof templatePath != 'string') {
     return 0;
@@ -70,8 +67,6 @@ export default async function ExportCollection({
   }
   // ! Random image jika bernilai true
 
-  console.log('Profile: ', profile[0]);
-
   if (generalData.split_file) {
     // * Jika split file aktif
     var outputDir = await dialog.showOpenDialog({
@@ -90,17 +85,18 @@ export default async function ExportCollection({
       const i = splitted_data.indexOf(data) + 1;
       const targetPath =
         outputDir + collections[0].keywords[0] + '_' + i + '.xlsx';
-      const workbook = new exceljs.Workbook();
-      try {
-        await workbook.xlsx.readFile(templatePath);
-      } catch (err) {
-        return onError(
-          `Terjadi kesalahan saat export file: ${err.message}, silahkan edit tanpa menambahkan data ditemplate lalu simpan menggunakan libreoffice, wpsoffice atau msoffice 2017 kebawah lalu simpan dan ulangi lagi`
-        );
-      }
-      const worksheet = await workbook.getWorksheet(
-        'ISI Template Impor Produk'
-      );
+      const workbook = await xlsx.fromFileAsync(templatePath);
+      const worksheet = workbook.sheet(0);
+      let lastRow = 3;
+      let tmp = [];
+
+      // try {
+      //   await xlsx.readFileSync(templatePath);
+      // } catch (err) {
+      //   return onError(
+      //     `Terjadi kesalahan saat export file: ${err.message}, silahkan edit tanpa menambahkan data ditemplate lalu simpan menggunakan libreoffice, wpsoffice atau msoffice 2017 kebawah lalu simpan dan ulangi lagi`
+      //   );
+      // }
       for (var row of data) {
         row.images = row.images.map((x) => x.replace('._webp', ''));
         var generated_random_title =
@@ -110,7 +106,7 @@ export default async function ExportCollection({
         generated_random_title = generated_random_title
           ? generated_random_title + ' '
           : '';
-        worksheet.addRow([
+        tmp.push([
           '',
           capitalize(max(70, generated_random_title + row.title)),
           max(
@@ -137,16 +133,27 @@ export default async function ExportCollection({
           'Aktif',
           row.stock >= 1000 ? 99 : row.stock,
           row.price,
+          '',
           profile[0].defaultValue.asurance,
         ]);
       }
-      // * Simpan file dalam buffer
-      fs.writeFile(targetPath, await workbook.xlsx.writeBuffer(), (err) => {
-        if (err) {
-          onError(err.message);
+      for (let r = 0; r < tmp.length; r++) {
+        for (let c = 0; c < tmp[r].length; c++) {
+          worksheet.cell(lastRow + 1, c + 1).value(tmp[r][c]);
         }
-      });
+        lastRow++;
+      }
       // End of splitted
+
+      // Simpan kedalam file
+      try {
+        if (fs.existsSync(targetPath)) {
+          fs.unlinkSync(targetPath);
+        }
+      } catch (err) {}
+
+      workbook.toFileAsync(targetPath);
+      console.log('File berhasil tersimpan');
     }
     return onSuccess();
   } else {
@@ -164,15 +171,12 @@ export default async function ExportCollection({
       return onError('Aksi dibatalkan oleh pengguna!');
     }
 
-    const workbook = new exceljs.Workbook();
-    try {
-      await workbook.xlsx.readFile(templatePath);
-    } catch (err) {
-      return onError(
-        `Terjadi kesalahan saat export file: ${err.message}, silahkan edit tanpa menambahkan data ditemplate lalu simpan menggunakan libreoffice, wpsoffice atau msoffice 2017 kebawah lalu simpan dan ulangi lagi`
-      );
-    }
-    const worksheet = await workbook.getWorksheet('ISI Template Impor Produk');
+    const workbook = await xlsx.fromFileAsync(templatePath);
+    const worksheet = workbook.sheet(0);
+
+    let lastRow = 3;
+    let tmp = [];
+
     for (var row of rows_collections_merged) {
       var generated_random_title =
         shuffleData.start_title[
@@ -181,7 +185,7 @@ export default async function ExportCollection({
       generated_random_title = generated_random_title
         ? generated_random_title + ' '
         : '';
-      worksheet.addRow([
+      tmp.push([
         '',
         capitalize(max(70, generated_random_title + row.title)),
         max(
@@ -208,23 +212,35 @@ export default async function ExportCollection({
         'Aktif',
         row.stock >= 1000 ? 99 : row.stock,
         row.price,
+        '',
         profile[0].defaultValue.asurance,
       ]);
     }
-    // * Simpan file dalam buffer
-    fs.writeFile(outputDir, await workbook.xlsx.writeBuffer(), (err) => {
-      if (err) {
-        onError(err.message);
+
+    for (let r = 0; r < tmp.length; r++) {
+      for (let c = 0; c < tmp[r].length; c++) {
+        worksheet.cell(lastRow + 1, c + 1).value(tmp[r][c]);
       }
-    });
+      lastRow++;
+    }
+
+    workbook.toFileAsync(outputDir);
+
+    // * Simpan file dalam buffer
+    // fs.writeFile(outputDir, await workbook.xlsx.writeBuffer(), (err) => {
+    //   if (err) {
+    //     onError(err.message);
+    //   }
+    // });
     return onSuccess();
   }
 }
 
 async function downloadTemplate(global) {
+  console.log('DOwnloading template...');
   if (!fs.existsSync(global.files.template_tokped)) {
     const downloader = new Downloader({
-      url: 'https://aliex.static.ziqva.com/file/template.xlsx',
+      url: 'https://ziqva.com/template.xlsx',
       directory: 'C:\\com.ziqvakampungsongo\\ziqva-lazada-scrapper-remastered',
       fileName: global.files.template_tokped.split('\\').pop(),
     });

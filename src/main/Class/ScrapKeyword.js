@@ -1,10 +1,11 @@
-import fs from 'fs';
-import cheerio from 'cheerio';
-import axios from 'axios';
-import Browser from '../Func/Browser';
-import Func from '../Func';
-
-console.log(process.argv)
+import fs from "fs";
+import cheerio from "cheerio";
+import axios from "axios";
+import Browser from "../Func/Browser";
+import Func from "../Func";
+import GetDefaultProfile from "../Func/GetDefaultProfile";
+import { dialog } from "electron";
+console.log(process.argv);
 
 export default class {
   constructor() {
@@ -24,25 +25,25 @@ export default class {
   async handleCaptcha(page) {
     return new Promise(async (resolve) => {
       const element = await page.$x(
-        '/html/body/div/div[2]/div/div[1]/div[2]/center/div[1]/div/div/div'
+        "/html/body/div/div[2]/div/div[1]/div[2]/center/div[1]/div/div/div"
       );
       if (element.length < 1) {
-        console.log('captcha tidak terdeteski');
+        console.log("captcha tidak terdeteski");
         resolve();
       } else {
         let nav_loop = true;
         do {
           try {
-            console.log('captcha terdeteksi');
+            console.log("captcha terdeteksi");
             // ! Solve the captcha
             const sliderElement = await page.waitForXPath(
-              '/html/body/div/div[2]/div/div[1]/div[2]/center/div[1]/div/div/div/div[2]/span',
+              "/html/body/div/div[2]/div/div[1]/div[2]/center/div[1]/div/div/div/div[2]/span",
               { timeout: 0 }
             );
             const slider = await sliderElement.boundingBox();
 
             const sliderHandleElement = await page.waitForXPath(
-              '/html/body/div/div[2]/div/div[1]/div[2]/center/div[1]/div/div/div/span',
+              "/html/body/div/div[2]/div/div[1]/div[2]/center/div[1]/div/div/div/span",
               { timeout: 0 }
             );
             const handle = await sliderHandleElement.boundingBox();
@@ -61,7 +62,7 @@ export default class {
               }
             );
             await page.mouse.up();
-            await page.waitForNavigation({ timeout: 10000, waitUntil: 'load' });
+            await page.waitForNavigation({ timeout: 10000, waitUntil: "load" });
             resolve();
             nav_loop = false;
           } catch (err) {
@@ -90,8 +91,20 @@ export default class {
       onComplete,
       totalChange,
       sortBy,
-      lazMall
+      lazMall,
     } = args;
+
+    const profile = await GetDefaultProfile(global);
+    if (!profile) {
+      dialog.showMessageBoxSync({
+        title: "Application Error",
+        message:
+          "Silahkan pilih profil default terlebih dahulu, data tidak akan ditampilkan jika anda belum memiliki profil default",
+        icon: "warning",
+        type: "warning",
+      });
+      return;
+    }
 
     this.stopped = false;
     this.onComplete = onComplete;
@@ -113,19 +126,19 @@ export default class {
         if (this.stopped) {
           return 1;
         }
-        onLog(keyword, 'Scan halaman ' + (i + 1));
+        onLog(keyword, "Scan halaman " + (i + 1));
         var navUrl = `https://www.lazada.co.id/catalog/?ajax=true&from=input${
-          filterLocation ? `&location=${location}` : ''
+          filterLocation ? `&location=${location}` : ""
         }${
-          minPrice > 0 || maxPrice > 0 ? `&price=${minPrice}-${maxPrice}` : ''
-        }&q=${keyword.replaceAll(' ', '%20')}&rating=${rating}&page=${i + 1}`;
-        
-        if(lazMall){
-          navUrl+= '&service=official'
+          minPrice > 0 || maxPrice > 0 ? `&price=${minPrice}-${maxPrice}` : ""
+        }&q=${keyword.replaceAll(" ", "%20")}&rating=${rating}&page=${i + 1}`;
+
+        if (lazMall) {
+          navUrl += "&service=official";
         }
 
-        if(sortBy !== 'default') {
-          navUrl+= '&sort='+sortBy
+        if (sortBy !== "default") {
+          navUrl += "&sort=" + sortBy;
         }
 
         var loop_fetch = true;
@@ -133,7 +146,7 @@ export default class {
           try {
             await page.goto(navUrl, {
               timeout: 10000,
-              waitUntil: 'networkidle2',
+              waitUntil: "networkidle2",
             });
             loop_fetch = false;
           } catch (err) {
@@ -141,26 +154,33 @@ export default class {
               return 1;
             }
             console.log(`Fetch error: ${err.message}`);
-            onLog(keyword, 'Err: ' + err.message);
+            onLog(keyword, "Err: " + err.message);
             await new Promise((resolve) => setTimeout(resolve, 500));
           }
         } while (loop_fetch);
         await this.handleCaptcha(page);
         const html = await page.content();
-        const json = cheerio.load(html)('body').text();
+        const json = cheerio.load(html)("body").text();
         try {
           var res = [];
           const data = JSON.parse(json);
           const items = data.mods.listItems;
           for (var item of items) {
-            res.push({
+            let x = {
               title: item.name,
-              description: item.description.join('\n').trim().length < 1 ? item.name : item.description.join('\n'),
-              price: parseInt(item.price),
+              description:
+                item.description.join("\n").trim().length < 1
+                  ? item.name
+                  : item.description.join("\n"),
+              price: item.price * (profile[0].kurs || 12000),
               stock: Func.RandomNumberofRange(10, 99),
-              images: item.thumbs.map((x) => x.image + '._webp'),
+              images: item.thumbs.map((x) => x.image),
               sku: item.sku,
-            });
+            };
+            if (x.images.length < 1) {
+              x.images[0] = item.image;
+            }
+            res.push(x);
           }
           this.results.push(...res);
           totalChange(this.results.length);
@@ -168,13 +188,13 @@ export default class {
           if (this.stopped) {
             return 1;
           }
-          onLog(keyword, 'Err: ' + err.message);
-          console.log('Failed parse: ' + err.message);
+          onLog(keyword, "Err: " + err.message);
+          console.log("Failed parse: " + err.message);
         }
 
         // onLog(keyword, 'Berhenti 0.1 detik untukmenghindari captcha');
         // await new Promise((resolve) => setTimeout(resolve, getRandomNumber(4, 6) * 1000));
-        await new Promise((resolve) => setTimeout(resolve, 15000));
+        await new Promise((resolve) => setTimeout(resolve, 15000))
       }
       onKeywordSuccess(keyword);
     }
