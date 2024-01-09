@@ -172,7 +172,7 @@ export default class {
                 item.description.join("\n").trim().length < 1
                   ? item.name
                   : item.description.join("\n"),
-              price: item.price * (profile[0].kurs || 12000),
+              price: item.price,
               stock: Func.RandomNumberofRange(10, 99),
               images: item.thumbs.map((x) => x.image),
               sku: item.sku,
